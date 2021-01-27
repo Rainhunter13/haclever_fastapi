@@ -136,7 +136,7 @@ Reponse =  [
 </pre>
 *Newly added cargo object*
 
-# Imlementation Details
+## Imlementation Details
 - REST API is developed with the FastAPI framework
 - Models are developed with tortoise orm
 - PostgreSQL is used as a database server
