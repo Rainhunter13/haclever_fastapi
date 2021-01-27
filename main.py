@@ -15,7 +15,7 @@ app = FastAPI()
 
 register_tortoise(
     app,
-    db_url="postgres://rainhunter_db:" + db_password + "@localhost:5432/haclever_db",
+    db_url="postgres://rainhunter_db:" + db_password + "@db:5432/haclever_db",
     modules={"models": ["models"]},
     generate_schemas=True,
     add_exception_handlers=True,
