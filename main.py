@@ -5,7 +5,7 @@ from typing import List, Dict
 
 from models import Cargo, Tariff, TariffPydantic, CargoPydantic
 from services.insurance import calculate_insurance_cost
-from services.tariffs import load_tariffs
+from services.tariffs import load_tariffs, get_json_tariffs
 
 db_password = quote_plus("Rainhunter13?")
 
@@ -20,15 +20,15 @@ register_tortoise(
 )
 
 
-@app.get("/tariffs", response_model=List[TariffPydantic])
-async def get_tariff():
-    return await TariffPydantic.from_queryset(Tariff.all())
+@app.get("/tariffs")
+async def get_tariffs():
+    return await get_json_tariffs()
 
 
 @app.post("/tariffs")
-async def post_tariff(tariffs: Dict):
+async def post_tariffs(tariffs: Dict):
     await load_tariffs(tariffs)
-    return tariffs
+    return await get_json_tariffs()
 
 
 @app.post("/insurance_cost", response_model=CargoPydantic)

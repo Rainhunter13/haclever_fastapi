@@ -1,4 +1,5 @@
-from models import Tariff
+from tortoise.functions import Count
+from models import Tariff, TariffPydantic
 
 
 async def load_tariffs(tariffs):
@@ -10,3 +11,10 @@ async def load_tariffs(tariffs):
             tariff_by_date["date"] = date
             await Tariff.create(**tariff_by_date)
             cnt += 1
+
+
+async def get_json_tariffs():
+    json_tariffs = {}
+    for tariff in await TariffPydantic.from_queryset(Tariff.all()):
+        json_tariffs[tariff.date] = await Tariff.filter(date=tariff.date).values("cargo_type", "rate")
+    return json_tariffs
