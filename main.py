@@ -4,6 +4,7 @@ from urllib.parse import quote_plus
 from typing import List
 
 from models import Cargo, Tariff, TariffPydantic, CargoPydantic
+from services.insurance import calculate_insurance_cost
 
 db_password = quote_plus("Rainhunter13?")
 
@@ -25,10 +26,12 @@ async def get_tariff():
 
 @app.post("/tariff")
 async def post_tariff(tariff: TariffPydantic):
-    await Tariff.create(**tariff.dict(exclude_unset=True))
+    await Tariff.create(**tariff.dict())
     return tariff
 
 
-@app.post("/insurance_cost")
-def calculate_insurance_cost(cargo: CargoPydantic):
+@app.post("/insurance_cost", response_model=CargoPydantic)
+async def insurance_cost(cargo: CargoPydantic):
+    await calculate_insurance_cost(cargo)
+    await Cargo.create(**cargo.dict())
     return cargo
