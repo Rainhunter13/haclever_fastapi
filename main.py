@@ -1,10 +1,11 @@
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 from urllib.parse import quote_plus
-from typing import List
+from typing import List, Dict
 
 from models import Cargo, Tariff, TariffPydantic, CargoPydantic
 from services.insurance import calculate_insurance_cost
+from services.tariffs import load_tariffs
 
 db_password = quote_plus("Rainhunter13?")
 
@@ -19,15 +20,15 @@ register_tortoise(
 )
 
 
-@app.get("/tariff", response_model=List[TariffPydantic])
+@app.get("/tariffs", response_model=List[TariffPydantic])
 async def get_tariff():
     return await TariffPydantic.from_queryset(Tariff.all())
 
 
-@app.post("/tariff")
-async def post_tariff(tariff: TariffPydantic):
-    await Tariff.create(**tariff.dict())
-    return tariff
+@app.post("/tariffs")
+async def post_tariff(tariffs: Dict):
+    await load_tariffs(tariffs)
+    return tariffs
 
 
 @app.post("/insurance_cost", response_model=CargoPydantic)
